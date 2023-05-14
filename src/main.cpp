@@ -5,9 +5,10 @@
 
 //int LED = 0;
 
-float X, Y, Z;
-
-
+float X1, Y1, Z1;
+float X2 = 0;
+float Y2 = 0;
+float Z2 = 0;
 
 void setup() {
 // setup button to record/stop gesture recognition
@@ -22,7 +23,7 @@ void setup() {
 
     Serial.begin(9600);
     CircuitPlayground.begin();
-
+    CircuitPlayground.setBrightness(10);
     //CircuitPlayground.setAccelRange(LIS3DH_RANGE_2_G);   // 2, 4, 8 or 16 G!
 
 }
@@ -30,23 +31,67 @@ void setup() {
 
 void get_avg()
 {
+    X1 = 0;
+    Y1 = 0;
+    Z1 = 0;
+
+    // Set Color of led's to yelow while reading data
+
+    for(int i = 0; i<= 9; i++)
+        CircuitPlayground.setPixelColor(i, 255, 255, 0);
+
+
+
     // store avg vlaue of each axis until user presses stop
     while(1)
     {
-        X+=CircuitPlayground.motionX();
-        Y+=CircuitPlayground.motionY();
-        Z+=CircuitPlayground.motionZ();
+        X1 += CircuitPlayground.motionX();
+        Y1 += CircuitPlayground.motionY();
+        Z1 += CircuitPlayground.motionZ();
 
         if(CircuitPlayground.rightButton())
+        {
+            Serial.print("X: ");
+            Serial.print(X1);
+            Serial.print("  Y: ");
+            Serial.print(Y1);
+            Serial.print("  Z: ");
+            Serial.println(Z1);
+
+            Serial.print("X Ratio: ");
+            Serial.print(X2/X1);
+            Serial.print("  Y Ratio: ");
+            Serial.print(Y2/Y1);
+            Serial.print("  Z Ratio: ");
+            Serial.print(Z2/Z1);
+
+            if(X2/X1 < 2 && Y2/Y1 <2 && Z2/Z1 < 2) // this needs to be changed
+            {
+                CircuitPlayground.playTone(440, 400);
+
+                for(int i = 0; i<= 9; i++)
+                    CircuitPlayground.setPixelColor(i, 0, 255, 0);
+
+                delay(1000);
+            }
+
+            X2 = X1;
+            Y2 = Y1;
+            Z2 = Z1;
+
+            // Set color to red
+            for(int i = 0; i<= 9; i++)
+                CircuitPlayground.setPixelColor(i, 255, 0, 0);
+
+            CircuitPlayground.playTone(1500, 400);
+
             break;
+        }
+
+        delay(100);
     }
 
-    Serial.print("X: ");
-    Serial.print(X);
-    Serial.print("  Y: ");
-    Serial.print(Y);
-    Serial.print("  Z: ");
-    Serial.println(Z);
+
 
 }
 
