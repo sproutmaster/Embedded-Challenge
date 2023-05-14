@@ -14,6 +14,8 @@ void setup() {
 }
 
 void loop() 
+  // when button is pressed to record mode, read accelerometer value x, y and z till stop button is pressed. Take the average of magnitude of each of those
+  // and store it. Compare it when the stop button is pressed. If it matches, turn neopixels green and beep, else red. Repeat
 {
   if((PINF & (1<<6)) != 0) //if right push button is pressed, turn on LED to indicate start recording
   {
@@ -26,8 +28,14 @@ void loop()
     PORTC &= ~(1<<7);
     LED = 0;
   }
-// when button is pressed to record mode, read accelerometer value x, y and z till stop button is pressed. Take the average of magnitude of each of those
-// and store it. Compare it when the stop button is pressed. If it matches, turn neopixels green and beep, else red. Repeat
+  
+  if(LED == 1)
+  {
+    void Accelerometer();
+  }
+}
 
-
+void Accelerometer()
+{
+  
 }
