@@ -15,13 +15,13 @@ void setup() {
 
 void loop() 
 {
-  if((PINF & (1<<6)) != 0)
+  if((PINF & (1<<6)) != 0) //if right push button is pressed, turn on LED to indicate start recording
   {
     PORTC |= (1<<7);
     LED = 1;
   }
 
-  if((PIND & (1<<4)) != 0)
+  if((PIND & (1<<4)) != 0) //if left push button is pressed, turn off LED to indicate stop recording
   {
     PORTC &= ~(1<<7);
     LED = 0;
