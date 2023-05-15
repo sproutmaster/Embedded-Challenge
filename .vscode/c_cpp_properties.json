@@ -1,0 +1,64 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "C:/ADDITIONAL_FILES/Embedded_Systems/Challenge/include",
+                "C:/ADDITIONAL_FILES/Embedded_Systems/Challenge/src",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/variants/circuitplay32u4",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/Adafruit_CircuitPlayground",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/Adafruit_CircuitPlayground/utility",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "C:/ADDITIONAL_FILES/Embedded_Systems/Challenge/include",
+                    "C:/ADDITIONAL_FILES/Embedded_Systems/Challenge/src",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/variants/circuitplay32u4",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/Adafruit_CircuitPlayground",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/Adafruit_CircuitPlayground/utility",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "C:/Users/Joe/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60107",
+                "ARDUINO_AVR_CIRCUIT_PLAYGROUND_CLASSIC",
+                "F_CPU=8000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "USB_VID=0x239A",
+                "USB_PID=0x8011",
+                "USB_PRODUCT=\"Adafruit\"",
+                "USB_MANUFACTURER=\"Adafruit\"",
+                "__AVR_ATmega32U4__",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "C:/Users/Joe/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerArgs": [
+                "-mmcu=atmega32u4",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
