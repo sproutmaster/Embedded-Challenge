@@ -19,8 +19,6 @@ void setup() {
 //  DDRF &= ~(1<<6); //F6 is the right push button
 //  DDRD &= ~(1<<4); //D4 is the left push button
 
-    while (!Serial);
-
     Serial.begin(9600);
     CircuitPlayground.begin();
     CircuitPlayground.setBrightness(10);
@@ -65,14 +63,14 @@ void get_avg()
             Serial.print("  Z Ratio: ");
             Serial.print(Z2/Z1);
 
-            if(X2/X1 < 2 && Y2/Y1 <2 && Z2/Z1 < 2) // this needs to be changed
+            if(X2/X1 < 1.5 && Y2/Y1 < 1.5 && Z2/Z1 < 1.5) // this needs to be changed
             {
                 CircuitPlayground.playTone(440, 400);
 
                 for(int i = 0; i<= 9; i++)
                     CircuitPlayground.setPixelColor(i, 0, 255, 0);
 
-                delay(1000);
+                delay(2000);
             }
 
             X2 = X1;
@@ -83,7 +81,7 @@ void get_avg()
             for(int i = 0; i<= 9; i++)
                 CircuitPlayground.setPixelColor(i, 255, 0, 0);
 
-            CircuitPlayground.playTone(1500, 400);
+            CircuitPlayground.playTone(2000, 400);
 
             break;
         }
