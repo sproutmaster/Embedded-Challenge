@@ -1,132 +1,216 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_CircuitPlayground.h>
-#include <SPI.h>
 
-//int LED = 0;
+#define SEQ_LENGTH 50
+float X_seq[SEQ_LENGTH], Y_seq[SEQ_LENGTH], Z_seq[SEQ_LENGTH];
+float check_X_seq[SEQ_LENGTH], check_Y_seq[SEQ_LENGTH], check_Z_seq[SEQ_LENGTH];
 
-float X1, Y1, Z1;
-float X2 = 0;
-float Y2 = 0;
-float Z2 = 0;
+int seq_index = 0;
+bool sequence_recorded = false;
+bool check_sequence_recorded = false;
+
+void indicate_success();
+void indicate_failure(int start_index, int end_index);
 
 void setup() {
-// setup button to record/stop gesture recognition
-// setup neo pixels to turn green when unlocked and red for locked
-// play a beep when unlocked
-
-//  DDRC |= (1<<7); //C7 is the LED PIN
-//  DDRF &= ~(1<<6); //F6 is the right push button
-//  DDRD &= ~(1<<4); //D4 is the left push button
-
-    Serial.begin(9600);
-    CircuitPlayground.begin();
-    CircuitPlayground.setBrightness(10);
-    //CircuitPlayground.setAccelRange(LIS3DH_RANGE_2_G);   // 2, 4, 8 or 16 G!
-
+  Serial.begin(9600);
+  CircuitPlayground.begin();
+  CircuitPlayground.setBrightness(10);
 }
 
+void record_sequence() {
+  Serial.println("Recording sequence...");
 
-void get_avg()
-{
-    X1 = 0;
-    Y1 = 0;
-    Z1 = 0;
+  // Wait for the record button to be released
+  while (CircuitPlayground.leftButton()) {
+    delay(10);
+  }
 
-    // Set Color of led's to yelow while reading data
+  if (sequence_recorded) {
+    // Stop recording if already recorded
+    sequence_recorded = false;
+    Serial.println("Recording stopped.");
+  } else {
+    // Initialize sequence index
+    seq_index = 0;
 
-    for(int i = 0; i<= 9; i++)
-        CircuitPlayground.setPixelColor(i, 255, 255, 0);
-
-
-
-    // store avg vlaue of each axis until user presses stop
-    while(1)
-    {
-        X1 += CircuitPlayground.motionX();
-        Y1 += CircuitPlayground.motionY();
-        Z1 += CircuitPlayground.motionZ();
-
-        if(CircuitPlayground.rightButton())
-        {
-            Serial.print("X: ");
-            Serial.print(X1);
-            Serial.print("  Y: ");
-            Serial.print(Y1);
-            Serial.print("  Z: ");
-            Serial.println(Z1);
-
-            Serial.print("X Ratio: ");
-            Serial.print(X2/X1);
-            Serial.print("  Y Ratio: ");
-            Serial.print(Y2/Y1);
-            Serial.print("  Z Ratio: ");
-            Serial.print(Z2/Z1);
-
-            if(X2/X1 < 1.5 && Y2/Y1 < 1.5 && Z2/Z1 < 1.5) // this needs to be changed
-            {
-                CircuitPlayground.playTone(440, 400);
-
-                for(int i = 0; i<= 9; i++)
-                    CircuitPlayground.setPixelColor(i, 0, 255, 0);
-
-                delay(2000);
-            }
-
-            X2 = X1;
-            Y2 = Y1;
-            Z2 = Z1;
-
-            // Set color to red
-            for(int i = 0; i<= 9; i++)
-                CircuitPlayground.setPixelColor(i, 255, 0, 0);
-
-            CircuitPlayground.playTone(2000, 400);
-
-            break;
-        }
-
-        delay(100);
+    // Light up LEDs in yellow while recording
+    for (int i = 0; i < 10; i++) {
+      CircuitPlayground.setPixelColor(i, 255, 255, 0);
     }
 
+    // Record accelerometer values until the record button is pressed again
+    while (!CircuitPlayground.leftButton()) {
+      X_seq[seq_index] = CircuitPlayground.motionX();
+      Y_seq[seq_index] = CircuitPlayground.motionY();
+      Z_seq[seq_index] = CircuitPlayground.motionZ();
+     // Print accelerometer values
+      Serial.print("X: ");
+      Serial.print(X_seq[seq_index]);
+      Serial.print("\tY: ");
+      Serial.print(Y_seq[seq_index]);
+      Serial.print("\tZ: ");
+      Serial.println(Z_seq[seq_index]);
+
+      // Increment seq_index by 1 and wrap it back to 0 if it reaches SEQ_LENGTH, 
+      // making sure that the index stays within the bounds of the sequence array.
+      seq_index = (seq_index + 1) % SEQ_LENGTH;
 
 
+      delay(100);
+    }
+
+    sequence_recorded = true;
+    Serial.println("Sequence Successfully Recorded!");
+  }
 }
 
-void loop()
-/*
-   when button is pressed to record mode, read accelerometer value x, y and z till stop button is pressed. Take the average of magnitude of each of those
-   and store it. Compare it when the stop button is pressed. If it matches, turn neopixels green and beep, else red. Repeat
-{
-  if((PINF & (1<<6)) != 0) //if right push button is pressed, turn on LED to indicate start recording
-  {
-    PORTC |= (1<<7);
-    LED = 1;
-  }
 
-  if((PIND & (1<<4)) != 0) //if left push button is pressed, turn off LED to indicate stop recording
-  {
-    PORTC &= ~(1<<7);
-    LED = 0;
-  }
+    
+bool check_sequence() {
+  Serial.println("\nCheck Recording sequence...");
 
-  if(LED == 1)
-  {
-    void Accelerometer();
-  }
-}
-
-void Accelerometer()
-{
-
-}
-*/
-{
-
-
-    if(CircuitPlayground.leftButton())
-        get_avg();
-
+  // Wait for the record button to be released
+  while (CircuitPlayground.rightButton()) {
     delay(10);
+  }
 
+  if (check_sequence_recorded) {
+    // Stop recording if already recorded
+    check_sequence_recorded = false;
+    Serial.println("Check Recording stopped.");
+  } 
+  else 
+  {
+    // Initialize sequence index
+    seq_index = 0;
+
+    // Light up LEDs in Purple while recording
+    for (int i = 0; i < 10; i++) {
+      CircuitPlayground.setPixelColor(i, 255, 0, 255);
+    }
+
+    // Record accelerometer values until the record button is pressed again
+    while (!CircuitPlayground.rightButton()) {
+      check_X_seq[seq_index] = CircuitPlayground.motionX();
+      check_Y_seq[seq_index] = CircuitPlayground.motionY();
+      check_Z_seq[seq_index] = CircuitPlayground.motionZ();
+      // Print accelerometer values
+      Serial.print("check X: ");
+      Serial.print(check_X_seq[seq_index]);
+      Serial.print("\tcheck Y: ");
+      Serial.print(check_Y_seq[seq_index]);
+      Serial.print("\tcheck Z: ");
+      Serial.println(check_Z_seq[seq_index]);
+
+      // Increment seq_index by 1 and wrap it back to 0 if it reaches SEQ_LENGTH, 
+      // making sure that the index stays within the bounds of the sequence array.
+      seq_index = (seq_index + 1) % SEQ_LENGTH;
+
+      delay(100);
+    }
+
+    check_sequence_recorded = true;
+    Serial.println("\tCheck Sequence Successfully Recorded!");
+
+
+    // Define start_index and end_index for sequence checking
+    int start_index = 0;
+    int end_index = seq_index - 1;
+
+    float tolerance = 30.0; // change tolerance if necessary
+     
+     // Forumula for Euclidean Distance
+    //https://www.cuemath.com/euclidean-distance-formula/
+
+    for (int i = start_index; i <= end_index; i++) {
+        float diffX = (check_X_seq[i] - X_seq[i]) * (check_X_seq[i] - X_seq[i]);
+        float diffY = (check_Y_seq[i] - Y_seq[i])  *  (check_Y_seq[i] - Y_seq[i]) ;
+        float diffZ = (check_Z_seq[i] - Z_seq[i])   * (check_Z_seq[i] - Z_seq[i]) ;
+
+    float euclideanDistance = sqrt(diffX + diffY + diffZ);
+
+    if (euclideanDistance > tolerance) {
+        indicate_failure(start_index, end_index);
+        return false;
+    }
+    }
+   
+    // Wait for the right button to be released before ending the function
+    while (CircuitPlayground.rightButton()) {
+      delay(10);
+    }
+ 
+
+    // If we reached here, the sequence was correct
+    indicate_success();
+    return true;
+  }
+  
 }
+
+
+void indicate_success() 
+{
+  // Light up LEDs in green and play a tone to indicate successful unlock
+  for (int i = 0; i < 10; i++) 
+    {
+        CircuitPlayground.setPixelColor(i, 0, 255, 0);
+    }
+  CircuitPlayground.playTone(880, 400);
+  delay(100);
+  Serial.println("Success! You're in!");
+}
+
+void indicate_failure(int start_index, int end_index) 
+{
+  // Light up LEDs in red to indicate unsuccessful unlock
+  for (int i = 0; i < 10; i++) 
+    {
+        CircuitPlayground.setPixelColor(i, 255, 0, 0);
+    }
+  delay(100);
+  Serial.println("Incorrect Sequence...Try Again");
+  Serial.println("\nExpected Sequence:");
+  for (int i = start_index; i <= end_index; i++) 
+    {
+        Serial.print("X: ");
+        Serial.print(X_seq[i]);
+        Serial.print("\tY: ");
+        Serial.print(Y_seq[i]);
+        Serial.print("\tZ: ");
+        Serial.println(Z_seq[i]);
+    }
+  Serial.println("\nSequence that was attempted:");
+
+  for (int i = start_index; i <= end_index; i++)
+   {
+    Serial.print("Check Value X: ");
+    Serial.print(check_X_seq[i]);
+    Serial.print("\tCheck Value Y: ");
+    Serial.print(check_Y_seq[i]);
+    Serial.print("\tCheck Value Z: ");
+    Serial.println(check_Z_seq[i]);
+    }
+}
+
+
+void loop() {
+  if (CircuitPlayground.leftButton()) {
+    // Record sequence when the record (left) button is pressed
+    record_sequence();
+  } 
+  else if (CircuitPlayground.rightButton()) {
+    // Check sequence when the right button is pressed and then released
+    while (CircuitPlayground.rightButton()) {
+      // do nothing until the button is released
+      delay(10);
+    }
+    check_sequence();
+  }
+
+  // Delay for stability
+  delay(10);
+}
+
